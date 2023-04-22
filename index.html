@@ -1,0 +1,142 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+<title>Page Title</title> 
+<style> 
+.body {
+    background-color: black;
+}
+.square { 
+    height: 4px; 
+    width: 4px; 
+    background-color: #fff; 
+} 
+</style> 
+</head> 
+<body> 
+<div id="screen"> 
+</div>
+<input id="radius" type="range" min="1" max="100" value="50">
+<input id="radiusx" type="range" min="1" max="100" value="50">
+<input id="radiusy" type="range" min="1" max="100" value="50">
+<script> 
+function getRandomInt(max) { 
+    return Math.floor(Math.random() * max); 
+} 
+function circle(x, y, r, tx, ty) {
+    if ((r**2)-((x-tx)**2) >= (y-ty)**2) {
+        return true;
+    }
+}
+function elipse(x, y, a, b, tx, ty) {
+    if (b**2*(1-((x-tx)**2/a**2)) >= (y-ty)**2) {
+        return true;
+    }
+}
+const res = 500;
+const canvas = document.createElement('canvas');
+const screen = document.getElementById("screen");
+const radius = document.getElementById("radius");
+const radiusx = document.getElementById("radiusx");
+const radiusy = document.getElementById("radiusy");
+const fps = document.getElementById("fps");
+const cir = [100, 100, res/2];
+const eli = [100, 100, res-100, res/2];
+
+canvas.width = res;
+canvas.height = res;
+screen.appendChild(canvas);
+const context = canvas.getContext('2d');
+
+radius.max = res;
+radius.value = cir[0];
+radiusx.max = res;
+radiusx.value = eli[0];
+radiusy.max = res;
+radiusy.value = eli[1];
+
+const buffer = new Uint8ClampedArray(res * res * 4);
+function draw() {
+    for (let i = 0; i < (res*res); i++) { 
+        const y = Math.floor(i/res); 
+        const x = i%res;
+        buffer[i*4] = 0; // red
+        buffer[i*4+1] = 0; // green
+        buffer[i*4+2] = 0;
+        buffer[i*4+3] = 0;
+        if (circle(x, y, cir[0], cir[1], cir[2])) { 
+            buffer[i*4] = x-y; // red
+            buffer[i*4+1] = y-x; // green
+            buffer[i*4 + 2] = x+y; // blue
+            buffer[i*4+ 3] = 255; // alpha
+        }
+        if (elipse(x, y, eli[0], eli[1], eli[2], eli[3])) { 
+            buffer[i*4] = y-x; // red
+            buffer[i*4+1] = x+y; // green
+            buffer[i*4 + 2] = x-y; // blue
+            buffer[i*4+ 3] = 255; // alpha
+
+        }
+    }
+    const imageData = new ImageData(buffer, res, res);
+    context.putImageData(imageData, 0, 0);
+}
+document.addEventListener("keypress", function(event) {
+  //console.log(event.keyCode);
+  if (event.keyCode == 119) { //W key
+    if (cir[2] > 0) {
+        cir[2]--;
+    }
+  }
+  if (event.keyCode == 115) { //S key
+    if (cir[2] < res) {
+        cir[2]++;
+    }
+  }
+  if (event.keyCode == 97) { //A key
+    if (cir[1] > 0) {
+        cir[1]--;
+    }
+  }
+  if (event.keyCode == 100) { //D key
+    if (cir[1] < res) {
+        cir[1]++;
+    }
+  }
+  if (event.keyCode == 105) { //I key
+    if (eli[3] > 0) {
+        eli[3]--;
+    }
+  }
+  if (event.keyCode == 107) { //K key
+    if (eli[3] < res) {
+        eli[3]++;
+    }
+  }
+  if (event.keyCode == 106) { //J key
+    if (eli[2] > 0) {
+        eli[2]--;
+    }
+  }
+  if (event.keyCode == 108) { //L key
+    if (eli[2] < res) {
+        eli[2]++;
+    }
+  }
+  if (event.keyCode == 113) {
+    clearInterval(animate); 
+  }
+});
+radius.oninput = function() {
+  cir[0] = radius.value;
+};
+radiusx.oninput = function() {
+  eli[0] = radiusx.value;
+};
+radiusy.oninput = function() {
+  eli[1] = radiusy.value;
+};
+const animate = setInterval(function () { draw(); }, 0);
+</script> 
+</body> 
+</html> 
