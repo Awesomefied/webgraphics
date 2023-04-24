@@ -89,11 +89,11 @@ function draw() {
           if (circle(x, y, cir[0], cir[1], cir[2])) { 
               const tx = (x-cir[1])*(res/cir[0]);
               const ty = (y-cir[2])*(res/cir[0]);
-              console.log(tx-ty);
-              buffer[i*4] = assets.images[cir[3]][i][0]; // red
-              buffer[i*4+1] = assets.images[cir[3]][i][1]; // green
-              buffer[i*4 + 2] = assets.images[cir[3]][i][2]; // blue
-              buffer[i*4+ 3] = assets.images[cir[3]][i][3]; // alpha
+              const imgdata = assets.images[cir[3]][i-100];
+              buffer[i*4] = imgdata[0]; // red
+              buffer[i*4+1] = imgdata[1]; // green
+              buffer[i*4 + 2] = imgdata[2]; // blue
+              buffer[i*4+ 3] = imgdata[3]; // alpha
           }
         }
         for (let e = 0; e < assets.objects.elipses.length; e++) {
@@ -173,4 +173,4 @@ canvas.onclick= function(event) {
 const animate = setInterval(function () { draw(); }, 0);
 </script> 
 </body> 
-</html> 
+</html>
