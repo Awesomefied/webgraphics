@@ -42,6 +42,9 @@ const radiusy = document.getElementById("radiusy");
 const fps = document.getElementById("fps");
 const cir = [100, 100, res/2];
 const eli = [100, 100, res-100, res/2];
+const assets = {};
+assets.objects.circles = [[100, 100, res/2]];
+assets.objects.elipses = [[100, 100, res-100, res/2]];
 
 canvas.width = res;
 canvas.height = res;
@@ -49,11 +52,11 @@ screen.appendChild(canvas);
 const context = canvas.getContext('2d');
 
 radius.max = res;
-radius.value = cir[0];
+radius.value = assets.objects.circles[0][0];
 radiusx.max = res;
-radiusx.value = eli[0];
+radiusx.value = assets.objects.elipses[0][0];
 radiusy.max = res;
-radiusy.value = eli[1];
+radiusy.value = assets.objects.elipses[0][1];
 
 const buffer = new Uint8ClampedArray(res * res * 4);
 function draw() {
@@ -65,15 +68,19 @@ function draw() {
         buffer[i*4+2] = 0;
         buffer[i*4+3] = 0;
         if (circle(x, y, cir[0], cir[1], cir[2])) { 
-            buffer[i*4] = x-y; // red
-            buffer[i*4+1] = y-x; // green
-            buffer[i*4 + 2] = x+y; // blue
+            const tx = (x-cir[1])*(res/cir[0]);
+            const ty = (y-cir[2])*(res/cir[0]);
+            buffer[i*4] = tx*-1; // red
+            buffer[i*4+1] = Math.abs((Math.abs(tx-tx/2)%256)-256); // green
+            buffer[i*4 + 2] = (tx-(tx/2))%256; // blue
             buffer[i*4+ 3] = 255; // alpha
         }
-        if (elipse(x, y, eli[0], eli[1], eli[2], eli[3])) { 
-            buffer[i*4] = y-x; // red
-            buffer[i*4+1] = x+y; // green
-            buffer[i*4 + 2] = x-y; // blue
+        if (elipse(x, y, eli[0], eli[1], eli[2], eli[3])) {
+            const tx = (x-eli[2])*(res/eli[0]);
+            const ty = (y-eli[3])*(res/eli[1]); 
+            buffer[i*4] = ty-tx; // red
+            buffer[i*4+1] = tx+ty; // green
+            buffer[i*4 + 2] = tx-ty; // blue
             buffer[i*4+ 3] = 255; // alpha
 
         }
@@ -84,43 +91,43 @@ function draw() {
 document.addEventListener("keypress", function(event) {
   //console.log(event.keyCode);
   if (event.keyCode == 119) { //W key
-    if (cir[2] > 0) {
-        cir[2]--;
+    if (assets.objects.circles[0][2] > 0) {
+        assets.objects.circles[0][2]--;
     }
   }
   if (event.keyCode == 115) { //S key
-    if (cir[2] < res) {
-        cir[2]++;
+    if (assets.objects.circles[0][2] < res) {
+        assets.objects.circles[0][2]++;
     }
   }
   if (event.keyCode == 97) { //A key
-    if (cir[1] > 0) {
-        cir[1]--;
+    if (assets.objects.circles[0][1] > 0) {
+        assets.objects.circles[0][1]--;
     }
   }
   if (event.keyCode == 100) { //D key
-    if (cir[1] < res) {
-        cir[1]++;
+    if (assets.objects.circles[0][1] < res) {
+        assets.objects.circles[0][1]++;
     }
   }
   if (event.keyCode == 105) { //I key
-    if (eli[3] > 0) {
-        eli[3]--;
+    if (assets.objects.elipses[0][3] > 0) {
+        assets.objects.elipses[0][3]--;
     }
   }
   if (event.keyCode == 107) { //K key
-    if (eli[3] < res) {
-        eli[3]++;
+    if (assets.objects.elipses[0][3] < res) {
+        assets.objects.elipses[0][3]++;
     }
   }
   if (event.keyCode == 106) { //J key
-    if (eli[2] > 0) {
-        eli[2]--;
+    if (assets.objects.elipses[0][2] > 0) {
+        assets.objects.elipses[0][2]--;
     }
   }
   if (event.keyCode == 108) { //L key
-    if (eli[2] < res) {
-        eli[2]++;
+    if (assets.objects.elipses[0][2] < res) {
+        assets.objects.elipses[0][2]++;
     }
   }
   if (event.keyCode == 113) {
@@ -128,13 +135,13 @@ document.addEventListener("keypress", function(event) {
   }
 });
 radius.oninput = function() {
-  cir[0] = radius.value;
+  assets.objects.circles[0][0] = radius.value;
 };
 radiusx.oninput = function() {
-  eli[0] = radiusx.value;
+  assets.objects.elipses[0][0] = radiusx.value;
 };
 radiusy.oninput = function() {
-  eli[1] = radiusy.value;
+  assets.objects.elipses[0][1] = radiusy.value;
 };
 const animate = setInterval(function () { draw(); }, 0);
 </script> 
