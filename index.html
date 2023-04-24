@@ -42,9 +42,9 @@ const radiusx = document.getElementById("radiusx");
 const radiusy = document.getElementById("radiusy");
 const fps = document.getElementById("fps");
 const assets = {objects:{circles:[], elipses:[]}, images:{}};
-assets.objects.circles = [[100, 100, res/2]];
+assets.objects.circles = [[100, 100, res/2, "./cat.webp"]];
 assets.objects.elipses = [[100, 100, res-100, res/2]];
-assets.images = {"cat.webp":[]};
+assets.images = {"./cat.webp":[]};
 
 canvas.width = res;
 canvas.height = res;
@@ -94,10 +94,10 @@ function draw() {
           if (circle(x, y, cir[0], cir[1], cir[2])) { 
               const tx = (x-cir[1])*(res/cir[0]);
               const ty = (y-cir[2])*(res/cir[0]);
-              buffer[i*4] = 255; // red
-              buffer[i*4+1] = 0; // green
-              buffer[i*4 + 2] = 255; // blue
-              buffer[i*4+ 3] = 255; // alpha
+              buffer[i*4] = assets.images[cir[3]][i][0]; // red
+              buffer[i*4+1] = assets.images[cir[3]][i][1]; // green
+              buffer[i*4 + 2] = assets.images[cir[3]][i][2]; // blue
+              buffer[i*4+ 3] = assets.images[cir[3]][i][3]; // alpha
           }
         }
         for (let e = 0; e < assets.objects.elipses.length; e++) {
