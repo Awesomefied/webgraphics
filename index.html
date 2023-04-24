@@ -89,10 +89,10 @@ function draw() {
           if (circle(x, y, cir[0], cir[1], cir[2])) { 
               const tx = (x-cir[1])*(res/cir[0]);
               const ty = (y-cir[2])*(res/cir[0]);
-              buffer[i*4] = assets.images[cir[3]][tx+ty][0]; // red
-              buffer[i*4+1] = assets.images[cir[3]][tx+ty][1]; // green
-              buffer[i*4 + 2] = assets.images[cir[3]][tx+ty][2]; // blue
-              buffer[i*4+ 3] = assets.images[cir[3]][tx+ty][3]; // alpha
+              buffer[i*4] = assets.images[cir[3]][tx][0]; // red
+              buffer[i*4+1] = assets.images[cir[3]][tx][1]; // green
+              buffer[i*4 + 2] = assets.images[cir[3]][tx][2]; // blue
+              buffer[i*4+ 3] = assets.images[cir[3]][tx][3]; // alpha
           }
         }
         for (let e = 0; e < assets.objects.elipses.length; e++) {
