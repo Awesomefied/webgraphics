@@ -57,18 +57,13 @@ radiusx.max = res;
 radiusx.value = assets.objects.elipses[0][0];
 radiusy.max = res;
 radiusy.value = assets.objects.elipses[0][1];
-
-const imgcvs = document.createElement('canvas');
-imgcvs.width = res;
-imgcvs.height = res;
-const imgctx = canvas.getContext('2d');
 const img = document.getElementById("img");
 
 for (let i = 0; i < Object.keys(assets.images).length; i++) {
   img.src = Object.keys(assets.images)[i];
-  imgctx.drawImage(img, 0, 0);
+  context.drawImage(img, 0, 0);
 
-  const imageData = imgctx.getImageData(0, 0, res, res);
+  const imageData = context.getImageData(0, 0, res, res);
 
   for (let z = 0; z < imageData.data.length; z += 4) {
     const red = imageData.data[z];
