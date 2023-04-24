@@ -89,7 +89,7 @@ function draw() {
           if (circle(x, y, cir[0], cir[1], cir[2])) { 
               const tx = (x-cir[1])*(res/cir[0]);
               const ty = (y-cir[2])*(res/cir[0]);
-              const imgdata = assets.images[cir[3]][(x-cir[1])+((y-cir[2])*res)];
+              const imgdata = assets.images[cir[3]][Math.abs(x-cir[1])+(Math.abs(y-cir[2])*res)];
               buffer[i*4] = imgdata[0]; // red
               buffer[i*4+1] = imgdata[1]; // green
               buffer[i*4 + 2] = imgdata[2]; // blue
