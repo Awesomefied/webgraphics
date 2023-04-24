@@ -19,6 +19,7 @@
 <input id="radius" type="range" min="1" max="100" value="50">
 <input id="radiusx" type="range" min="1" max="100" value="50">
 <input id="radiusy" type="range" min="1" max="100" value="50">
+<img id="img" style="display:none">
 <script> 
 function getRandomInt(max) { 
     return Math.floor(Math.random() * max); 
@@ -40,11 +41,10 @@ const radius = document.getElementById("radius");
 const radiusx = document.getElementById("radiusx");
 const radiusy = document.getElementById("radiusy");
 const fps = document.getElementById("fps");
-const cir = [100, 100, res/2];
-const eli = [100, 100, res-100, res/2];
-const assets = {};
+const assets = {objects:{circles:[], elipses:[]}, images:{}};
 assets.objects.circles = [[100, 100, res/2]];
 assets.objects.elipses = [[100, 100, res-100, res/2]];
+assets.images = {"cat.webp":[]};
 
 canvas.width = res;
 canvas.height = res;
@@ -58,6 +58,28 @@ radiusx.value = assets.objects.elipses[0][0];
 radiusy.max = res;
 radiusy.value = assets.objects.elipses[0][1];
 
+const imgcvs = document.createElement('canvas');
+imgcvs.width = res;
+imgcvs.height = res;
+const imgctx = canvas.getContext('2d');
+const img = document.getElementById("img");
+
+for (let i = 0; i < Object.keys(assets.images).length; i++) {
+  img.src = Object.keys(assets.images)[i];
+  imgctx.drawImage(img, 0, 0);
+
+  const imageData = imgctx.getImageData(0, 0, res, res);
+
+  for (let z = 0; z < imageData.data.length; z += 4) {
+    const red = imageData.data[z];
+    const green = imageData.data[z + 1];
+    const blue = imageData.data[z + 2];
+    const alpha = imageData.data[z + 3];
+    assets.images[Object.keys(assets.images)[i]].push([red,green,blue,alpha])
+    //console.log(`Pixel ${i / 4}: (${red}, ${green}, ${blue}, ${alpha})`);
+  }
+}
+
 const buffer = new Uint8ClampedArray(res * res * 4);
 function draw() {
     for (let i = 0; i < (res*res); i++) { 
@@ -67,22 +89,27 @@ function draw() {
         buffer[i*4+1] = 0; // green
         buffer[i*4+2] = 0;
         buffer[i*4+3] = 0;
-        if (circle(x, y, cir[0], cir[1], cir[2])) { 
-            const tx = (x-cir[1])*(res/cir[0]);
-            const ty = (y-cir[2])*(res/cir[0]);
-            buffer[i*4] = tx*-1; // red
-            buffer[i*4+1] = Math.abs((Math.abs(tx-tx/2)%256)-256); // green
-            buffer[i*4 + 2] = (tx-(tx/2))%256; // blue
-            buffer[i*4+ 3] = 255; // alpha
+        for (let c = 0; c < assets.objects.circles.length; c++) {
+          const cir = assets.objects.circles[c];
+          if (circle(x, y, cir[0], cir[1], cir[2])) { 
+              const tx = (x-cir[1])*(res/cir[0]);
+              const ty = (y-cir[2])*(res/cir[0]);
+              buffer[i*4] = 255; // red
+              buffer[i*4+1] = 0; // green
+              buffer[i*4 + 2] = 255; // blue
+              buffer[i*4+ 3] = 255; // alpha
+          }
         }
-        if (elipse(x, y, eli[0], eli[1], eli[2], eli[3])) {
-            const tx = (x-eli[2])*(res/eli[0]);
-            const ty = (y-eli[3])*(res/eli[1]); 
-            buffer[i*4] = ty-tx; // red
-            buffer[i*4+1] = tx+ty; // green
-            buffer[i*4 + 2] = tx-ty; // blue
-            buffer[i*4+ 3] = 255; // alpha
-
+        for (let e = 0; e < assets.objects.elipses.length; e++) {
+          const eli = assets.objects.elipses[e];
+          if (elipse(x, y, eli[0], eli[1], eli[2], eli[3])) {
+              const tx = (x-eli[2])*(res/eli[0]);
+              const ty = (y-eli[3])*(res/eli[1]); 
+              buffer[i*4] = ty-tx; // red
+              buffer[i*4+1] = tx+ty; // green
+              buffer[i*4 + 2] = tx-ty; // blue
+              buffer[i*4+ 3] = 255; // alpha
+          }
         }
     }
     const imageData = new ImageData(buffer, res, res);
@@ -142,6 +169,10 @@ radiusx.oninput = function() {
 };
 radiusy.oninput = function() {
   assets.objects.elipses[0][1] = radiusy.value;
+};
+canvas.onclick= function(event) {
+    assets.objects.circles.push([50, event.x, event.y]);
+    console.log(assets.objects.circles);
 };
 const animate = setInterval(function () { draw(); }, 0);
 </script> 
