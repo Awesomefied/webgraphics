@@ -170,7 +170,7 @@ radiusy.oninput = function() {
   assets.objects.elipses[0][1] = radiusy.value;
 };
 canvas.onclick= function(event) {
-    assets.objects.circles.push([50, event.x, event.y]);
+    assets.objects.circles.push([50, event.x, event.y, "./cat.webp"]);
     console.log(assets.objects.circles);
 };
 const animate = setInterval(function () { draw(); }, 0);
