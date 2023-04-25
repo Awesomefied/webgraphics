@@ -16,7 +16,6 @@
 <body> 
 <div id="screen"> 
 </div>
-<input id="test" type="range" min="0" max="100" value="2">
 <input id="radius" type="range" min="1" max="100" value="50">
 <input id="radiusx" type="range" min="1" max="100" value="50">
 <input id="radiusy" type="range" min="1" max="100" value="50">
@@ -76,11 +75,7 @@ for (let i = 0; i < Object.keys(assets.images).length; i++) {
   }
 }
 
-const testslider = document.getElementById("test");
 var test = 2;
-testslider.oninput = function() {
-  test = testslider.value;
-};
     
 const buffer = new Uint8ClampedArray(res * res * 4);
 function draw() {
@@ -96,7 +91,7 @@ function draw() {
           if (circle(x, y, cir[0], cir[1], cir[2])) { 
               const tx = (x-cir[1])*(res/cir[0]);
               const ty = (y-cir[2])*(res/cir[0]);
-              const imgdata = assets.images[cir[3]][Math.floor((x-cir[1]+(res/2))*((cir[0]/test)/res)+((y-cir[2]+(res/2))*res)*((cir[0]/test)/res))];
+              const imgdata = assets.images[cir[3]][Math.floor((x-cir[1]+(res/2))*(cir[0]*test/res)+((y-cir[2]+(res/2))*res)*(cir[0]*test/res))];
               buffer[i*4] = imgdata[0]; // red
               buffer[i*4+1] = imgdata[1]; // green
               buffer[i*4 + 2] = imgdata[2]; // blue
